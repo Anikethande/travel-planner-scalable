@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse
 from datetime import date
 from django.contrib.auth.models import User
-
+from django.conf import settings
 # Create your models here.
 
 class Checklist(models.Model):
@@ -22,7 +22,8 @@ class Travel(models.Model):
     country = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     description = models.TextField(max_length=250)
-    image = models.CharField(default=None, blank=True, null=True, max_length=2000)
+    # image = models.CharField(default=None, blank=True, null=True, max_length=2000)
+    image = models.ImageField(upload_to='images/', default='images/no-image.png')
     checklists = models.ManyToManyField(Checklist)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

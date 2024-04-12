@@ -8,12 +8,17 @@ h1, .brand-logo {
     font-family: 'Style Script', cursive; 
 }
 
+
 nav .nav-wrapper {
     background: linear-gradient(90deg, #49bd13 0%, #039be5 100%);
 }
 
 main {
     flex: 1 0 auto;
+}
+
+.margin-standard {
+    margin: 30px !important;
 }
 
 footer.page-footer {

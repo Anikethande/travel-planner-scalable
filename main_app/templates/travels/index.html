@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 
 <h1> Travels List </h1>
@@ -28,11 +28,7 @@
       
 
       <div class="right">
-        {% if travel.image == None %}
-        <img height="100px" src="/static/images/no-image.png" />
-        {% else %}
-        <img height="100px" src="{{ travel.image }}" />
-        {% endif %}
+        <img height="100px" src="{{ travel.image.url }}" alt="{% static 'images/no-image.png' %}" />
       </div>
 
     </div>

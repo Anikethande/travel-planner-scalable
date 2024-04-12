@@ -1,7 +1,21 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
 {{ title }}
+{% endblock %}
+
+{% block style %}
+<style>
+    /* Custom CSS */
+  .container-card {
+    display: flex;
+    justify-content: space-between;
+  }
+  .container-card .col {
+    flex: 0 0 48%; /* Adjust the width of each column as needed */
+    /* Add margin or padding if needed */
+  }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -10,17 +24,56 @@
 <div class="card">
     <div class="card-content">
 
-        <span class="card-title">{{ travel.name }}</span>
-        <p>Country: {{ travel.country }}</p>
-        <p>City: {{ travel.city }}</p>
-        <p>Description: {{ travel.description }}</p>
+        <div class="container-card">
+            <div class="col">
+                <span class="card-title">{{ travel.name }}</span>
+                <p>Country: {{ travel.country }}</p>
+                <p>City: {{ travel.city }}</p>
+                <p>Description: {{ travel.description }}</p>
+            </div>
+            <div class="col">
+                <div class="right">
+                    <img height="100px" src="{{ travel.image.url }}" alt="{% static 'images/no-image.png' %}" />
+                </div>
+            </div>
+        </div>
 
-    
+        
 
     </div>
 
+    <div class="margin-standard">
+        <h5 style="text-align: center; margin: 2rem;">Weather Information for {{ travel.city }}</h5>
+        {% if weather_data %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Min Temp</th>
+                    <th>Max Temp</th>
+                    <th>Day Weather</th>
+                    <th>Night Weather</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for day in weather_data %}
+                    <tr>
+                        <td>{{ day.date }}</td>
+                        <td>{{ day.min_temperature }}{{ day.unit }}</td>
+                        <td>{{ day.max_temperature }}{{ day.unit }}</td>
+                        <td><i class="wi wi-accu-{{ day.day_icon }}"></i></td>
+                        <td><i class="wi wi-accu-{{ day.night_icon }}"></i></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <h5 style="text-align: center; margin: 2rem;">Weather Data could not be retrieved. Please check the city name and try again.</h5>
+        {% endif %}
+    </div>
+
     <div class="card-action">
-        <a href="{% url 'travels_update' travel.id %}">Edit</a>
+        <a href="{% url 'travels_update' travel.id %}">Edit Trip Details</a>
         <a href="{% url 'travels_delete' travel.id %}">Delete</a>
     </div>
 
