@@ -125,9 +125,11 @@ class AddCheckingAPI(APIView):
     def post(self, request, travel_id):
         serializer = CheckingFormSerializer(data=request.data)
         if serializer.is_valid():
-            new_checking = serializer.save(travel=travel_id)  # Associate with travel
+            new_checking = serializer.save()  # Associate with travel
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print(serializer.errors)  # Log validation errors for debugging
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ChecklistDetail(LoginRequiredMixin, DetailView):

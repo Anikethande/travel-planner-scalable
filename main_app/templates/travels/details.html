@@ -82,11 +82,16 @@
 <div>
 
 
-    <form action="{% url 'add_checking' travel.id %}" method="post">
+    <form id="add-checking-form">
         {% csrf_token %}
-        {{ checking_form.as_p }}
-        <input type="submit" value="Add Checking" class="btn">
+        <div class="form-group">
+            {{ checking_form.as_p }}
+        </div>
+        <button type="submit" class="btn">Add Checking</button>
     </form>
+
+
+    
 
     {% if travel.checking_visit %}
     <div class="card-panel teal-text center-align"> You've been to {{ travel.city }} ,  log a new visit. </div>
@@ -194,6 +199,7 @@
 <script>
 
     var dateElement = document.getElementById('id_date');
+
     M.Datepicker.init(dateElement, {
         format: 'yyyy-mm-dd',
         defaultDate: new Date(),
@@ -205,28 +211,29 @@
     M.FormSelect.init(visitElement);
 
     $(document).ready(function() {
+        const travelId = '{{ travel.id }}';
+        console.log(travelId);
         $('#add-checking-form').submit(function(event) {
             event.preventDefault(); // Prevent default form submission
 
-            const travelId = '{{ travel.id }}'; // Access travel ID from Django template context
-            const formData = $(this).serialize(); // Serialize form data
+            // const travelId = '{{ travel.id }}'; // Access travel ID from Django template context
+            const formData = $(this).serialize() + "&travel=" + travelId; // Serialize form data
+
+            const url = "{% url 'add_checking_api' travel_id=travel.id %}"; // Use travelId variable
 
             $.ajax({
-                url: `{% url 'add_checking_api' %}`, // Dynamically construct API URL
+                url: url,
                 type: 'POST',
                 data: formData,
-                dataType: 'json', // Expect JSON response from the API
+                dataType: 'json',
                 success: function(response) {
-                    // Handle successful form submission:
                     console.log('Checking added successfully:', response);
                     location.reload();
                     // Optionally, update the UI (e.g., show success message)
                     // Or redirect to the detail page using JavaScript
                 },
                 error: function(error) {
-                    // Handle API request errors:
                     console.error('Error adding checking:', error);
-                    alert("Error adding checking");
                     // Optionally, display error messages to the user
                 }
             });

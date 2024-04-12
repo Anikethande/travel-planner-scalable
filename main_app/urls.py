@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import AddCheckingAPI
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -9,8 +10,8 @@ urlpatterns = [
     path('travels/create/', views.TravelCreate.as_view(), name='travels_create'),
     path('travels/<int:pk>/update/', views.TravelUpdate.as_view(), name='travels_update'),
     path('travels/<int:pk>/delete/', views.TravelDelete.as_view(), name='travels_delete'),
-    path('travels/<int:travel_id>/add_checking/', views.add_checking, name='add_checking'),
-    
+    # path('travels/<int:travel_id>/add_checking/', views.add_checking, name='add_checking'),
+    path('travels/<int:travel_id>/add_checking/', AddCheckingAPI.as_view(), name='add_checking_api'),
     # Checklist Model
     path('checklists/', views.checklists_index, name = 'checklists_index'),
     path('checklists/<int:pk>/', views.ChecklistDetail.as_view(), name='checklists_detail'),
