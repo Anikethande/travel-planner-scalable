@@ -38,7 +38,7 @@ class Travel(models.Model):
         
 
 class Checking(models.Model):
-    date = models.DateField("Checking Date")
+    date = models.DateField("Check In Date")
     visit = models.CharField(default='Visited On', max_length=100)
     travel = models.ForeignKey(Travel, on_delete=models.CASCADE)
 

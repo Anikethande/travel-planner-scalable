@@ -45,7 +45,7 @@
     <div class="margin-standard">
         <h5 style="text-align: center; margin: 2rem;">Weather Information for {{ travel.city }}</h5>
         {% if weather_data %}
-        <table>
+        <table class="striped">
             <thead>
                 <tr>
                     <th>Date</th>
@@ -89,16 +89,16 @@
     </form>
 
     {% if travel.checking_visit %}
-    <div class="card-panel teal-text center-align"> You've been to {{ travel.name }}, checking to log a new visit. </div>
+    <div class="card-panel teal-text center-align"> You've been to {{ travel.city }} ,  log a new visit. </div>
     {% else %}
-    <div class="card-panel red-text center-align"> You've never been to {{ travel.name }}, checking to log a visit. </div>
+    <div class="card-panel red-text center-align"> You've never been to {{ travel.city }}, Click below to log a visit. </div>
     {% endif %}
 
     <table class="striped">
         <thead>
             <tr>
                 <th></th>
-                <th>Visited On</th>
+                <th>Visit History</th>
             </tr>
         </thead>
 
@@ -203,6 +203,35 @@
 
     var visitElement = document.getElementById('id_visit');
     M.FormSelect.init(visitElement);
+
+    $(document).ready(function() {
+        $('#add-checking-form').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const travelId = '{{ travel.id }}'; // Access travel ID from Django template context
+            const formData = $(this).serialize(); // Serialize form data
+
+            $.ajax({
+                url: `{% url 'add_checking_api' %}`, // Dynamically construct API URL
+                type: 'POST',
+                data: formData,
+                dataType: 'json', // Expect JSON response from the API
+                success: function(response) {
+                    // Handle successful form submission:
+                    console.log('Checking added successfully:', response);
+                    location.reload();
+                    // Optionally, update the UI (e.g., show success message)
+                    // Or redirect to the detail page using JavaScript
+                },
+                error: function(error) {
+                    // Handle API request errors:
+                    console.error('Error adding checking:', error);
+                    alert("Error adding checking");
+                    // Optionally, display error messages to the user
+                }
+            });
+        });
+    });
 
 </script>
 

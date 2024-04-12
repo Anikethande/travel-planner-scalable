@@ -52,7 +52,9 @@ def get_weather(city_name):
         url = f'http://dataservice.accuweather.com/locations/v1/cities/search?apikey={api_key}&q={city_name}'
         response = requests.get(url)
         data = response.json()
+        print(data)
         location_key = data[0]['Key']
+        print(location_key)
         url = f'http://dataservice.accuweather.com/forecasts/v1/daily/5day/{location_key}?apikey={api_key}&details=false&metric=true'
         response = requests.get(url)
         data = response.json()
@@ -63,6 +65,7 @@ def get_weather(city_name):
         return daily_forecasts
 
     except Exception as e:
+        print(e)
         return {"api_error":True}
 
 @login_required
@@ -92,6 +95,7 @@ def travels_detail(request, travel_id):
 
 
     else: 
+
         weather_data = []
 
     checklists_travel_for_planning = Checklist.objects.filter(user = request.user).exclude(id__in = travel.checklists.all().values_list('id'))
@@ -108,6 +112,22 @@ def add_checking(request, travel_id):
         new_checking.travel_id = travel_id
         new_checking.save()
         return redirect('detail', travel_id = travel_id)
+
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .serializers import CheckingFormSerializer
+
+class AddCheckingAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, travel_id):
+        serializer = CheckingFormSerializer(data=request.data)
+        if serializer.is_valid():
+            new_checking = serializer.save(travel=travel_id)  # Associate with travel
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ChecklistDetail(LoginRequiredMixin, DetailView):
