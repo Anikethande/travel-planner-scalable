@@ -9,7 +9,8 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.dateparse import parse_datetime
-import os, requests, json, datetime
+import os, requests, json, datetime, random
+from django.conf import settings
 from decouple import config
 
 # Create your views here.
@@ -130,6 +131,42 @@ class AddCheckingAPI(APIView):
         else:
             print(serializer.errors)  # Log validation errors for debugging
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetCityAPI(APIView):
+    permission_classes = [IsAuthenticated]
+    # http_method_names = ["POST"]
+
+    def post(self, request):
+        print(request.data)
+        anywhere = request.data.get("anywhere", True)
+        country = request.data.get("country", None)
+
+        print(anywhere,country)
+
+        if anywhere == True:
+            # Read countrylist.json
+            with open(settings.STATIC_ROOT+"\json\countrylist.json", "r") as file:
+                country_data = json.load(file)
+            
+            # Choose a random country key
+            random_country = random.choice(list(country_data.keys()))
+            # Choose a random city from the list associated with the chosen country
+            random_city = random.choice(country_data[random_country])
+
+            return Response({"status":200,"country":random_country,"city": random_city})
+
+        else:
+            # Read countrylist2.json
+            with open(settings.STATIC_ROOT+"\json\countrylist2.json", "r") as file:
+                country_data = json.load(file)
+            
+            if country in country_data:
+                # Choose a random city from the list associated with the specified country
+                random_city = random.choice(country_data[country])
+                return Response({"status":200,"country":country,"city": random_city})
+            else:
+                return Response({"status":400,"error": "Country didn't match"})
 
 
 class ChecklistDetail(LoginRequiredMixin, DetailView):

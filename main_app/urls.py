@@ -19,6 +19,8 @@ urlpatterns = [
     path('checklists/<int:pk>/update/', views.ChecklistUpdate.as_view(), name='checklists_update'),
     path('checklists/<int:pk>/delete/', views.ChecklistDelete.as_view(), name='checklists_delete'),
 
+    path('travels/random_travel_destination/',views.GetCityAPI.as_view(), name='get-city-api'),
+
     # M:M
     path('travels/<int:travel_id>/assoc_checklist/<int:checklist_id>/', views.assoc_checklist, name='assoc_checklist'),
     path('travels/<int:travel_id>/unassoc_checklist/<int:checklist_id>/', views.unassoc_checklist, name='unassoc_checklist'),
