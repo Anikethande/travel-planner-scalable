@@ -144,7 +144,7 @@ class GetCityAPI(APIView):
 
         print(anywhere,country)
 
-        if anywhere == True:
+        if anywhere==True or anywhere=="True":
             # Read countrylist.json
             with open(settings.STATIC_ROOT+"\json\countrylist.json", "r") as file:
                 country_data = json.load(file)
