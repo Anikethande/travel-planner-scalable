@@ -48,19 +48,10 @@ def travels_index(request):
 
 def get_weather(city_name):
     try:
-        # Make an API request to AccuWeather
-        api_key = config('ACCUWEATHER_API')
-        url = f'http://dataservice.accuweather.com/locations/v1/cities/search?apikey={api_key}&q={city_name}'
+        url = f'https://scalable-api.ashisholi.tech/weather-forecast?city={city_name}'
         response = requests.get(url)
-        data = response.json()
-        print(data)
-        location_key = data[0]['Key']
-        print(location_key)
-        url = f'http://dataservice.accuweather.com/forecasts/v1/daily/5day/{location_key}?apikey={api_key}&details=false&metric=true'
-        response = requests.get(url)
-        data = response.json()
-        # Extract relevant weather info (e.g., daily forecasts)
-        daily_forecasts = data['DailyForecasts']
+        data = response.json()        
+        daily_forecasts = data['forecastData']['DailyForecasts']
         # Process the data as needed
 
         return daily_forecasts
@@ -74,25 +65,27 @@ def travels_detail(request, travel_id):
     checking_form = CheckingForm
     travel = Travel.objects.get(id=travel_id)
     daily_forecasts = get_weather(travel.city)
+    print(daily_forecasts)
     if "api_error" not in daily_forecasts:
-        print(json.dumps(daily_forecasts))
         weather_data = []
         for day in daily_forecasts:
+                print(day)
             # Convert ISO date to DDMMYYYY format
-            iso_date = day["Date"]
-            parsed_date = datetime.datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%S%z")
-            formatted_date = parsed_date.strftime("%d/%m/%Y")
+                iso_date = day["Date"]
+                parsed_date = datetime.datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%S%z")
+                formatted_date = parsed_date.strftime("%d/%m/%Y")
 
-            # Create the weather data dictionary
-            data = {
-                "date": formatted_date,
-                "min_temperature": day["Temperature"]["Minimum"]["Value"],
-                "max_temperature": day["Temperature"]["Maximum"]["Value"],
-                "unit": day["Temperature"]["Minimum"]["Unit"],
-                "day_icon": day["Day"]["Icon"],
-                "night_icon": day["Night"]["Icon"]
-            }
-            weather_data.append(data)
+                # Create the weather data dictionary
+                data = {
+                    "date": formatted_date,
+                    "min_temperature": day["Temperature"]["Minimum"]["Value"],
+                    "max_temperature": day["Temperature"]["Maximum"]["Value"],
+                    "unit": day["Temperature"]["Minimum"]["Unit"],
+                    "day_icon": day["Day"]["Icon"],
+                    "night_icon": day["Night"]["Icon"],
+                    "my_suggestion":day["ForecastMessage"]
+                }
+                weather_data.append(data)
 
 
     else: 
